@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <link rel="stylesheet" href="/src/styles.css">
+</head>
+
+<body>
+    <!-- <div id="home">
+        <header>
+            <h1>Chess Game</h1>
+        </header>
+        <main>
+            <div id="home-button-container">
+                <button class="game-btn" id="play-computer">Play vs Computer</button>
+                <button class="game-btn" id="play-friend">Play vs Friend</button>
+                <button class="game-btn" id="practice">Practice Mode</button>
+            </div>
+        </main>
+    </div> -->
+</body>
+
+<script type="module">
+    import { Model } from '/dist/model.js';
+    import { HomePage } from '/dist/pages/home.js';
+    import { ChessBoard } from '/dist/pages/chess_board.js';
+
+    const page = new ChessBoard("1");
+    const model = new Model(page);
+</script>
+
+</html>
