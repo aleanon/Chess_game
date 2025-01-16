@@ -1,6 +1,8 @@
-import { Page } from './pages/page.js';
+import { ChessBoard } from "./pages/chess_game/chess_board.js";
+import { ChessGame } from "./pages/chess_game/chess_game.js";
+import { Page } from "./pages/page.js";
 
-class Model {
+export class Model {
     private currentPage: Page;
 
     constructor(page: Page) {
@@ -23,8 +25,9 @@ class Model {
         }
     }
     view() {
-        this.currentPage?.view()
+        this.currentPage?.view();
     }
 }
 
-export { Model };
+const page = new ChessGame("1");
+export const model = new Model(page);

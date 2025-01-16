@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Game</title>
-    <link rel="stylesheet" href="/src/styles.css">
+    <link rel="stylesheet" href="/src/styles/styles.css">
 </head>
 
 <body>
@@ -24,12 +24,18 @@
 </body>
 
 <script type="module">
-    import { Model } from '/dist/model.js';
+    import { Model, model } from '/dist/model.js';
     import { HomePage } from '/dist/pages/home.js';
-    import { ChessBoard } from '/dist/pages/chess_board.js';
+    import { ChessGame } from '/dist/pages/chess_game/chess_game.js';
+    import { ChessBoard } from '/dist/pages/chess_game/chess_board.js';
+    import { Position } from '/dist/pages/chess_game/position.js';
+    import { Bishop } from '/dist/pages/chess_game/pieces/bishop.js';
+    import { King } from '/dist/pages/chess_game/pieces/king.js';
+    import { Knight } from '/dist/pages/chess_game/pieces/knight.js';
+    import { Pawn } from '/dist/pages/chess_game/pieces/pawn.js';
+    import { Queen } from '/dist/pages/chess_game/pieces/queen.js';
+    import { Rook } from '/dist/pages/chess_game/pieces/rook.js';
 
-    const page = new ChessBoard("1");
-    const model = new Model(page);
 </script>
 
 </html>

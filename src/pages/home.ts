@@ -2,8 +2,8 @@ import { Page } from './page.js';
 import { Model } from '../model.js';
 
 export class HomePage implements Page {
-    public readonly urlElement: string = 'home';
-    private readonly CONTAINER_ID = 'home';
+    public readonly urlElement: string = 'home/';
+    private readonly CONTAINER_ID = 'home-page';
     private readonly BUTTON_CONTAINER_ID = 'home-button-container';
     private readonly COMPUTER_BTN_ID = 'computer-mode-btn';
     private readonly FRIEND_BTN_ID = 'friend-mode-btn';
