@@ -31,3 +31,11 @@ export class Model {
 
 const page = new ChessGame("1");
 export const model = new Model(page);
+
+declare global {
+    interface Window {
+        model: Model;
+    }
+}
+
+window.model = model;
