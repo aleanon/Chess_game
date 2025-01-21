@@ -8,13 +8,23 @@
 
 .chess-board {
     width: 100%;
+    display: flex;
+    flex-direction: column;
     aspect-ratio: 1 / 1;
     border: 2px solid #333;
+}
+
+.chess-board.player-black {
+    flex-direction: column-reverse;
 }
 
 .board-row {
     display: flex;
     height: 12.5%;
+}
+
+.board-row.player-black {
+    flex-direction: row-reverse;
 }
 
 .square.light {
@@ -37,6 +47,9 @@
 .square-content {
     width: 100%;
     height: 100%;
+}
+
+.with-piece {
     cursor: pointer;
 }
 
@@ -63,6 +76,36 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
-    pointer-events: none;  /* This lets clicks "pass through" */
-  }
+    background-color: rgba(0, 0, 0, 0.5); 
+    pointer-events: none;
+}
+
+.board-wrapper {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto;
+}
+  
+.rank-labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.rank-labels.player-black {
+    flex-direction: column-reverse;
+}
+  
+.file-labels {
+    display: flex;
+    justify-content: space-around;
+    grid-column: 2;
+}
+
+.file-labels.player-black {
+    flex-direction: row-reverse;
+}
+  
+.chessboard {
+    grid-column: 2;
+}

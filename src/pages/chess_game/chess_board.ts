@@ -8,12 +8,12 @@ import { Rook } from "./pieces/rook.js";
 import { Position } from "./position.js";
 import { Square } from "./squares.js";
 
-const columns = ["a", "b", "c", "d", "e", "f", "g", "h"];
 const BOARD_ID = "chess-board";
 
 export class ChessBoard {
     private squares: Square[][];
     private selectedPiece: ChessPiece | null = null;
+    private player_color: Color = Color.BLACK;
 
     constructor() {
         this.squares = this.constructNewBoard();
@@ -92,12 +92,44 @@ export class ChessBoard {
         return row;
     }
 
+    public updateBoardView() {
+        this.squares.forEach((row) => {
+            row.forEach((square) => square.updateSquareView());
+        });
+    }
+
     createBoardHtml(): string {
-        return /*HTML*/ `
-            <div id="${BOARD_ID}" class="chess-board">
-                ${this.createBoardRowsHtml()}
+        return /*HTML*/ ` 
+        <div class="board-wrapper">
+            <div class="rank-labels player-${this.player_color}">
+                <div>8</div>
+                <div>7</div>
+                <div>6</div>
+                <div>5</div>
+                <div>4</div>
+                <div>3</div>
+                <div>2</div>
+                <div>1</div>
             </div>
-        `;
+
+            <div id="${BOARD_ID}" class="chess-board player-${
+            this.player_color
+        }">
+                    ${this.createBoardRowsHtml()}
+            </div>
+           
+            
+            <div class="file-labels player-${this.player_color}">
+                <div>a</div>
+                <div>b</div>
+                <div>c</div>
+                <div>d</div>
+                <div>e</div>
+                <div>f</div>
+                <div>g</div>
+                <div>h</div>
+            </div>
+            </div>`;
     }
 
     private createBoardRowsHtml(): string {
@@ -112,7 +144,7 @@ export class ChessBoard {
 
     private createRowHtml(squares: Square[]): string {
         let row = "";
-        row += `<div class="board-row">`;
+        row += `<div class="board-row player-${this.player_color}">`;
 
         for (let square of squares) {
             row += square.createSquarehtml();
@@ -123,20 +155,39 @@ export class ChessBoard {
         return row;
     }
 
-    public selectPiece(row: number, column: number) {
-        this.selectedPiece = this.squares[row][column].chessPiece();
-        this.removeAnyHighlights();
+    public selectSquare(row: number, column: number) {
+        const selectedSquare = this.squares[row][column];
+        this.selectedPiece = selectedSquare.chessPiece();
+        this.markAllSquaresAsNotMovableTo();
 
-        if (this.selectedPiece === null) return;
+        if (this.selectedPiece === null) {
+            this.updateBoardView();
+            return;
+        }
 
         const potentialMoves = this.selectedPiece.potentialMoves(
-            this.selectedPiece.position
+            selectedSquare.position
         );
         const moves = this.filterImpossibleMoves(
             potentialMoves,
             this.selectedPiece.color
         );
-        this.highlightSquares(moves);
+        this.markSquaresAsMovableTo(moves);
+        this.updateBoardView();
+    }
+
+    markAllSquaresAsNotMovableTo() {
+        this.squares.forEach((row) => {
+            row.forEach((square) => {
+                square.can_move_to = false;
+            });
+        });
+    }
+
+    markSquaresAsMovableTo(moves: Position[]) {
+        moves.forEach((position) => {
+            this.squares[position.row][position.col].can_move_to = true;
+        });
     }
 
     filterImpossibleMoves(moves: Position[][], pieceColor: Color): Position[] {
@@ -156,19 +207,22 @@ export class ChessBoard {
         return validMoves;
     }
 
-    highlightSquares(positions: Position[]): void {
-        positions.forEach((position) => {
-            const squareElement = document.getElementById(position.name);
-            if (squareElement) {
-                squareElement.classList.add("highlight");
-            }
-        });
-    }
+    moveTo(row: number, col: number) {
+        if (this.selectedPiece == null) return;
 
-    removeAnyHighlights() {
-        const squares = document.getElementsByClassName("square");
-        for (let square of squares) {
-            square.classList.remove("highlight");
-        }
+        const currentSquare =
+            this.squares[this.selectedPiece.position.row][
+                this.selectedPiece.position.col
+            ];
+        const piece = currentSquare.takePiece();
+        const targetSquare = this.squares[row][col];
+        if (piece == null)
+            throw new Error("Attempted to move from a square without a piece");
+
+        piece.position = targetSquare.position;
+        targetSquare.placePiece(piece);
+        this.selectedPiece = null;
+        this.markAllSquaresAsNotMovableTo();
+        this.updateBoardView();
     }
 }

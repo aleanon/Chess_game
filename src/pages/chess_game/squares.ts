@@ -4,9 +4,9 @@ import { Position } from "./position.js";
 const columns = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
 export class Square {
-    private readonly position: Position;
+    public readonly position: Position;
     private piece: ChessPiece | null;
-    private highlight: boolean = false;
+    public can_move_to: boolean = false;
     private contestedByBlack: boolean = false;
     private contestedByWhite: boolean = false;
     private color: string;
@@ -32,11 +32,11 @@ export class Square {
     }
 
     shouldHighlight(): boolean {
-        return this.highlight;
+        return this.can_move_to;
     }
 
     removeHighlight() {
-        this.highlight = false;
+        this.can_move_to = false;
     }
 
     hasSameColorPiece(color: Color): boolean {
@@ -70,33 +70,40 @@ export class Square {
             : this.contestedByBlack;
     }
 
+    public updateSquareView() {
+        const squareElement = document.getElementById(this.position.name);
+        if (squareElement) {
+            squareElement.outerHTML = this.createSquarehtml();
+        }
+    }
+
     public createSquarehtml(): string {
+        const highlighting = this.can_move_to ? "highlight" : "";
+
         return /* HTML */ `
-            <div id=${this.position.name} class="square ${this.color}">
-                ${this.piece ? this.createPieceHtml(this.piece) : ""}
-                ${this.position.col == 0
-                    ? `<div class='row-id'>${8 - this.position.row}</div>`
-                    : ""}
-                ${this.position.row == 7
-                    ? `<div class='column-id'>${
-                          columns[this.position.col]
-                      }</div>`
-                    : ""}
+            <div
+                id=${this.position.name}
+                class="square ${this.color} ${highlighting}"
+            >
+                ${this.createSquareContentHtml()}
             </div>
         `;
     }
 
-    private createPieceHtml(piece: ChessPiece): string {
+    private createSquareContentHtml(): string {
         return /* HTML */ `
             <div
-                class="square-content"
-                onclick="window.model
-                    .getCurrentPage()
-                    .board
-                    .selectPiece(${piece.position.row}, ${piece.position.col})"
+                class="square-content ${this.piece != null ? "with-piece" : ""}"
+                onclick="${this.createOnclick()}"
             >
-                ${piece.svg()}
+                ${this.piece?.svg() ?? ""}
             </div>
         `;
+    }
+
+    private createOnclick() {
+        return this.can_move_to
+            ? `window.model.getCurrentPage().board.moveTo(${this.position.row}, ${this.position.col})`
+            : `window.model.getCurrentPage().board.selectSquare(${this.position.row}, ${this.position.col})`;
     }
 }

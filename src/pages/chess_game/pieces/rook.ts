@@ -45,6 +45,6 @@ export class Rook implements ChessPiece {
             }
         }
 
-        return [];
+        return moves;
     }
 }

@@ -79,7 +79,7 @@ export class Position {
 
     static new(row: number, col: number): Position {
         return new Position(
-            `${String.fromCharCode(65 + col)}${row + 1}`,
+            `${String.fromCharCode(65 + col)}${8 - row}`,
             row,
             col
         );

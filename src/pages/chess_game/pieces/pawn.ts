@@ -24,6 +24,7 @@ export class Pawn implements ChessPiece {
     }
 
     public potentialMoves(fromPosition: Position): Position[][] {
+        const takeDirections = [[-1]];
         const possibleMoves: Position[][] = [];
         if (this.hasMoved && fromPosition.row < 7)
             possibleMoves.push([

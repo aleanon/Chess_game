@@ -33,7 +33,7 @@ export class Queen implements ChessPiece {
             [-1, 1],
         ];
 
-        const moves: Position[][] = Array(directions.length).fill([]);
+        const moves: Position[][] = [[], [], [], [], [], [], [], []];
 
         for (let dir = 0; dir < directions.length; dir++) {
             const [rowDir, colDir] = directions[dir];

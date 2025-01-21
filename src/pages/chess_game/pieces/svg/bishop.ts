@@ -1,7 +1,7 @@
 import { Color } from "../chess_piece.js";
 
 const svg = (color: Color) => {
-  return /*svg*/ `
+    return /*svg*/ `
         <svg 
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 750 350"
@@ -18,6 +18,6 @@ const svg = (color: Color) => {
 };
 
 export const BISHOP_SVG = {
-  white: svg(Color.WHITE),
-  black: svg(Color.BLACK),
+    white: svg(Color.WHITE),
+    black: svg(Color.BLACK),
 } as const;
