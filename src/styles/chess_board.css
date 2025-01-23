@@ -14,7 +14,7 @@
     border: 2px solid #333;
 }
 
-.chess-board.player-black {
+.chess-board.column-reverse {
     flex-direction: column-reverse;
 }
 
@@ -23,7 +23,7 @@
     height: 12.5%;
 }
 
-.board-row.player-black {
+.board-row.row-reverse {
     flex-direction: row-reverse;
 }
 
@@ -92,7 +92,7 @@
     justify-content: space-around;
 }
 
-.rank-labels.player-black {
+.rank-labels.column-reverse {
     flex-direction: column-reverse;
 }
   
@@ -102,7 +102,7 @@
     grid-column: 2;
 }
 
-.file-labels.player-black {
+.file-labels.row-reverse {
     flex-direction: row-reverse;
 }
   

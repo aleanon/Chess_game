@@ -13,10 +13,12 @@ const BOARD_ID = "chess-board";
 export class ChessBoard {
     private squares: Square[][];
     private selectedPiece: ChessPiece | null = null;
-    private player_color: Color = Color.BLACK;
+    private player_color: Color = Color.WHITE;
+    private rotateBoard: boolean;
 
     constructor() {
         this.squares = this.constructNewBoard();
+        this.rotateBoard = this.player_color === Color.BLACK;
     }
 
     private constructNewBoard(): Square[][] {
@@ -101,7 +103,9 @@ export class ChessBoard {
     createBoardHtml(): string {
         return /*HTML*/ ` 
         <div class="board-wrapper">
-            <div class="rank-labels player-${this.player_color}">
+            <div class="rank-labels ${
+                this.rotateBoard ? "column-reverse" : ""
+            }">
                 <div>8</div>
                 <div>7</div>
                 <div>6</div>
@@ -112,14 +116,14 @@ export class ChessBoard {
                 <div>1</div>
             </div>
 
-            <div id="${BOARD_ID}" class="chess-board player-${
-            this.player_color
+            <div id="${BOARD_ID}" class="chess-board ${
+            this.rotateBoard ? "column-reverse" : ""
         }">
                     ${this.createBoardRowsHtml()}
             </div>
            
             
-            <div class="file-labels player-${this.player_color}">
+            <div class="file-labels ${this.rotateBoard ? "row-reverse" : ""}">
                 <div>a</div>
                 <div>b</div>
                 <div>c</div>
@@ -144,7 +148,9 @@ export class ChessBoard {
 
     private createRowHtml(squares: Square[]): string {
         let row = "";
-        row += `<div class="board-row player-${this.player_color}">`;
+        row += `<div class="board-row ${
+            this.rotateBoard ? "row-reverse" : ""
+        }">`;
 
         for (let square of squares) {
             row += square.createSquarehtml();
@@ -166,7 +172,8 @@ export class ChessBoard {
         }
 
         const potentialMoves = this.selectedPiece.potentialMoves(
-            selectedSquare.position
+            selectedSquare.position,
+            this.squares
         );
         const moves = this.filterImpossibleMoves(
             potentialMoves,

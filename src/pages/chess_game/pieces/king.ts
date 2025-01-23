@@ -1,5 +1,5 @@
 import { Position } from "../position.js";
-import { ChessPiece, Color } from "./chess_piece.js";
+import { ChessPiece, Color, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { KING_SVG } from "./svg/king.js";
 import { KNIGHT_SVG } from "./svg/knight.js";
@@ -46,5 +46,9 @@ export class King implements ChessPiece {
                 return null;
             })
             .filter((move): move is Position[] => move !== null);
+    }
+
+    public pieceType(): PieceType {
+        return PieceType.KING;
     }
 }

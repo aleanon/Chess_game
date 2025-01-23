@@ -1,5 +1,5 @@
 import { Position } from "../position.js";
-import { ChessPiece, Color } from "./chess_piece.js";
+import { ChessPiece, Color, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { KNIGHT_SVG } from "./svg/knight.js";
 
@@ -43,5 +43,9 @@ export class Knight implements ChessPiece {
             moves.push([Position.new(newRow, newCol)]);
         }
         return moves;
+    }
+
+    public pieceType(): PieceType {
+        return PieceType.KNIGHT;
     }
 }
