@@ -1,5 +1,6 @@
 import { Position } from "../position.js";
-import { ChessPiece, Color, PieceType } from "./chess_piece.js";
+import { Square } from "../squares.js";
+import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { ROOK_SVG } from "./svg/rook.js";
 
@@ -21,7 +22,10 @@ export class Rook implements ChessPiece {
         return this.color === Color.WHITE ? ROOK_SVG.white : ROOK_SVG.black;
     }
 
-    public potentialMoves(fromPosition: Position): Position[][] {
+    public potentialMoves(
+        fromPosition: Position,
+        squares: Square[][]
+    ): Position[][] {
         const directions = [
             [0, 1], //Right
             [0, -1], //Left
@@ -37,7 +41,14 @@ export class Rook implements ChessPiece {
             let row = fromPosition.row + rowDir;
             let col = fromPosition.col + colDir;
 
-            while (row >= 0 && row < 8 && col >= 0 && col < 8) {
+            while (isWithinBounds(row, col)) {
+                const pieceAtPosition = squares[row][col].chessPiece();
+                if (pieceAtPosition !== null) {
+                    if (pieceAtPosition.color != this.color) {
+                        moves[dir].push(Position.new(row, col));
+                    }
+                    break;
+                }
                 const pos = Position.new(row, col);
                 moves[dir].push(pos);
                 row += rowDir;

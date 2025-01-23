@@ -73,7 +73,7 @@ export class King implements ChessPiece {
     ): boolean {
         const piece = squares[row][column].chessPiece();
         return (
-            (piece === null || piece?.color === this.opponentColor()) &&
+            (piece === null || piece?.color !== this.color) &&
             !squares[row][column].isContestedBy(this.opponentColor())
         );
     }

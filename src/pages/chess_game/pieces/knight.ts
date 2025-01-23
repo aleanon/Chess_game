@@ -71,7 +71,7 @@ export class Knight implements ChessPiece {
         const square = squares[row][col];
         return (
             square.chessPiece() === null ||
-            square.chessPiece()?.color === this.opponentColor()
+            square.chessPiece()?.color !== this.color
         );
     }
 }
