@@ -175,11 +175,11 @@ export class ChessBoard {
             selectedSquare.position,
             this.squares
         );
-        const moves = this.filterImpossibleMoves(
-            potentialMoves,
-            this.selectedPiece.color
-        );
-        this.markSquaresAsMovableTo(moves);
+        // const moves = this.filterImpossibleMoves(
+        //     potentialMoves,
+        //     this.selectedPiece.color
+        // );
+        this.markSquaresAsMovableTo(potentialMoves);
         this.updateBoardView();
     }
 
@@ -191,28 +191,30 @@ export class ChessBoard {
         });
     }
 
-    markSquaresAsMovableTo(moves: Position[]) {
-        moves.forEach((position) => {
-            this.squares[position.row][position.col].can_move_to = true;
+    markSquaresAsMovableTo(moves: Position[][]) {
+        moves.forEach((row) => {
+            row.forEach((position) => {
+                this.squares[position.row][position.col].can_move_to = true;
+            });
         });
     }
 
-    filterImpossibleMoves(moves: Position[][], pieceColor: Color): Position[] {
-        const validMoves: Position[] = [];
-        for (let row of moves) {
-            for (let position of row) {
-                const chessPiece =
-                    this.squares[position.row][position.col].chessPiece();
-                if (chessPiece != null) {
-                    if (chessPiece.color === pieceColor) break;
-                    validMoves.push(position);
-                    break;
-                }
-                validMoves.push(position);
-            }
-        }
-        return validMoves;
-    }
+    // filterImpossibleMoves(moves: Position[][], pieceColor: Color): Position[] {
+    //     const validMoves: Position[] = [];
+    //     for (let row of moves) {
+    //         for (let position of row) {
+    //             const chessPiece =
+    //                 this.squares[position.row][position.col].chessPiece();
+    //             if (chessPiece != null) {
+    //                 if (chessPiece.color === pieceColor) break;
+    //                 validMoves.push(position);
+    //                 break;
+    //             }
+    //             validMoves.push(position);
+    //         }
+    //     }
+    //     return validMoves;
+    // }
 
     moveTo(row: number, col: number) {
         if (this.selectedPiece == null) return;

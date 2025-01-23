@@ -45,12 +45,11 @@ export class King implements ChessPiece {
             const newCol = fromPosition.col + colDir;
 
             if (
-                !isWithinBounds(
-                    newRow,
-                    newCol || !this.isValidMove(newRow, newCol, squares)
-                )
+                !isWithinBounds(newRow, newCol) ||
+                !this.isValidMove(newRow, newCol, squares)
             )
                 continue;
+
             const pos = Position.new(newRow, newCol);
             moves.push([pos]);
         }
@@ -72,6 +71,10 @@ export class King implements ChessPiece {
         column: number,
         squares: Square[][]
     ): boolean {
-        return squares[row][column];
+        const piece = squares[row][column].chessPiece();
+        return (
+            (piece === null || piece?.color === this.opponentColor()) &&
+            !squares[row][column].isContestedBy(this.opponentColor())
+        );
     }
 }
