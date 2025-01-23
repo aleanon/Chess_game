@@ -28,4 +28,10 @@ export interface ChessPiece {
     potentialMoves(fromPosition: Position, squares: Square[][]): Position[][];
 
     pieceType(): PieceType;
+
+    opponentColor(): Color;
+}
+
+export function isWithinBounds(row: number, column: number): boolean {
+    return row >= 0 && row < 8 && column >= 0 && column < 8;
 }

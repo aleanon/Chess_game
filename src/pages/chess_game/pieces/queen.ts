@@ -55,4 +55,9 @@ export class Queen implements ChessPiece {
     public pieceType(): PieceType {
         return PieceType.QUEEN;
     }
+
+    public opponentColor(): Color {
+        if (this.color === Color.WHITE) return Color.BLACK;
+        return Color.WHITE;
+    }
 }

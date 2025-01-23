@@ -1,6 +1,6 @@
 import { Position } from "../position.js";
 import { Square } from "../squares.js";
-import { ChessPiece, Color, PieceType } from "./chess_piece.js";
+import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { BISHOP_SVG } from "./svg/bishop.js";
 
@@ -40,9 +40,13 @@ export class Bishop implements ChessPiece {
             let row = fromPosition.row + rowDir;
             let col = fromPosition.col + colDir;
 
-            while (this.isWithinBounds(row, col)) {
+            while (isWithinBounds(row, col)) {
                 const pieceAtPosition = squares[row][col].chessPiece();
                 if (pieceAtPosition !== null) {
+                    if (pieceAtPosition.color != this.color) {
+                        moves[dir].push(Position.new(row, col));
+                    }
+                    break;
                 }
                 const pos = Position.new(row, col);
                 moves[dir].push(pos);
@@ -58,7 +62,8 @@ export class Bishop implements ChessPiece {
         return PieceType.BISHOP;
     }
 
-    private isWithinBounds(row: number, col: number): boolean {
-        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    public opponentColor(): Color {
+        if (this.color === Color.WHITE) return Color.BLACK;
+        return Color.WHITE;
     }
 }

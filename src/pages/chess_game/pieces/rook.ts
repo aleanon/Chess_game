@@ -51,4 +51,9 @@ export class Rook implements ChessPiece {
     public pieceType(): PieceType {
         return PieceType.ROOK;
     }
+
+    public opponentColor(): Color {
+        if (this.color === Color.WHITE) return Color.BLACK;
+        return Color.WHITE;
+    }
 }

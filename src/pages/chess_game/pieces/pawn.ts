@@ -113,4 +113,9 @@ export class Pawn implements ChessPiece {
             ];
         }
     }
+
+    public opponentColor(): Color {
+        if (this.color === Color.WHITE) return Color.BLACK;
+        return Color.WHITE;
+    }
 }

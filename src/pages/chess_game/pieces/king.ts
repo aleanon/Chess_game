@@ -1,5 +1,6 @@
 import { Position } from "../position.js";
-import { ChessPiece, Color, PieceType } from "./chess_piece.js";
+import { Square } from "../squares.js";
+import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { KING_SVG } from "./svg/king.js";
 import { KNIGHT_SVG } from "./svg/knight.js";
@@ -22,7 +23,10 @@ export class King implements ChessPiece {
         return this.color === Color.WHITE ? KING_SVG.white : KING_SVG.black;
     }
 
-    public potentialMoves(fromPosition: Position): Position[][] {
+    public potentialMoves(
+        fromPosition: Position,
+        squares: Square[][]
+    ): Position[][] {
         const directions = [
             [-1, -1],
             [-1, 0],
@@ -34,21 +38,40 @@ export class King implements ChessPiece {
             [1, 1],
         ];
 
-        return directions
-            .map(([rowDir, colDir]) => {
-                const newRow = fromPosition.row + rowDir;
-                const newCol = fromPosition.col + colDir;
+        const moves: Position[][] = [];
 
-                if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-                    const pos = Position.new(newRow, newCol);
-                    return [pos];
-                }
-                return null;
-            })
-            .filter((move): move is Position[] => move !== null);
+        for (const [rowDir, colDir] of directions) {
+            const newRow = fromPosition.row + rowDir;
+            const newCol = fromPosition.col + colDir;
+
+            if (
+                !isWithinBounds(
+                    newRow,
+                    newCol || !this.isValidMove(newRow, newCol, squares)
+                )
+            )
+                continue;
+            const pos = Position.new(newRow, newCol);
+            moves.push([pos]);
+        }
+
+        return moves;
     }
 
     public pieceType(): PieceType {
         return PieceType.KING;
+    }
+
+    public opponentColor(): Color {
+        if (this.color === Color.WHITE) return Color.BLACK;
+        return Color.WHITE;
+    }
+
+    private isValidMove(
+        row: number,
+        column: number,
+        squares: Square[][]
+    ): boolean {
+        return squares[row][column];
     }
 }

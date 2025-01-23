@@ -1,5 +1,5 @@
 import { Position } from "../position.js";
-import { ChessPiece, Color, PieceType } from "./chess_piece.js";
+import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { KNIGHT_SVG } from "./svg/knight.js";
 
@@ -39,7 +39,7 @@ export class Knight implements ChessPiece {
                 fromPosition.row + dirRow,
                 fromPosition.col + dirCol,
             ];
-            if (newRow < 0 || newRow > 7 || newCol < 0 || newCol > 7) continue;
+            if (!isWithinBounds(newRow, newCol)) continue;
             moves.push([Position.new(newRow, newCol)]);
         }
         return moves;
@@ -47,5 +47,10 @@ export class Knight implements ChessPiece {
 
     public pieceType(): PieceType {
         return PieceType.KNIGHT;
+    }
+
+    public opponentColor(): Color {
+        if (this.color === Color.WHITE) return Color.BLACK;
+        return Color.WHITE;
     }
 }

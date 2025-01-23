@@ -64,7 +64,7 @@ export class Square {
         this.contestedByWhite = false;
     }
 
-    isContestedByColor(color: Color): boolean {
+    isContestedBy(color: Color): boolean {
         return color === Color.WHITE
             ? this.contestedByWhite
             : this.contestedByBlack;
@@ -93,7 +93,7 @@ export class Square {
     private createSquareContentHtml(): string {
         return /* HTML */ `
             <div
-                class="square-content ${this.piece != null ? "with-piece" : ""}"
+                class="square-content ${this.piece != null ? "clickable" : ""}"
                 onclick="${this.createOnclick()}"
             >
                 ${this.piece?.svg() ?? ""}
