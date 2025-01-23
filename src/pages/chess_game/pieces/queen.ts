@@ -4,6 +4,17 @@ import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { QUEEN_SVG } from "./svg/queen.js";
 
+const directions = [
+    [1, -1],
+    [1, 0],
+    [1, 1],
+    [0, -1],
+    [0, 1],
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+];
+
 export class Queen implements ChessPiece {
     readonly color: Color;
     isSelected: boolean = false;
@@ -22,45 +33,25 @@ export class Queen implements ChessPiece {
         return this.color === Color.WHITE ? QUEEN_SVG.white : QUEEN_SVG.black;
     }
 
-    public potentialMoves(
-        fromPosition: Position,
-        squares: Square[][]
-    ): Position[][] {
-        const directions = [
-            [1, -1],
-            [1, 0],
-            [1, 1],
-            [0, -1],
-            [0, 1],
-            [-1, -1],
-            [-1, 0],
-            [-1, 1],
-        ];
-
-        const moves: Position[][] = [[], [], [], [], [], [], [], []];
-
-        for (let dir = 0; dir < directions.length; dir++) {
-            const [rowDir, colDir] = directions[dir];
-
+    public calculateMoves(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
             let row = fromPosition.row + rowDir;
             let col = fromPosition.col + colDir;
 
             while (isWithinBounds(row, col)) {
-                const pieceAtPosition = squares[row][col].chessPiece();
+                const square = squares[row][col];
+                const pieceAtPosition = square.chessPiece();
                 if (pieceAtPosition !== null) {
                     if (pieceAtPosition.color != this.color) {
-                        moves[dir].push(Position.new(row, col));
+                        square.highlight = true;
                     }
                     break;
                 }
-                const pos = Position.new(row, col);
-                moves[dir].push(pos);
+                square.highlight = true;
                 row += rowDir;
                 col += colDir;
             }
         }
-
-        return moves;
     }
 
     public pieceType(): PieceType {
@@ -68,7 +59,25 @@ export class Queen implements ChessPiece {
     }
 
     public opponentColor(): Color {
-        if (this.color === Color.WHITE) return Color.BLACK;
-        return Color.WHITE;
+        return this.color === Color.WHITE ? Color.BLACK : Color.WHITE;
+    }
+
+    public contestSquares(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
+            let row = fromPosition.row + rowDir;
+            let col = fromPosition.col + colDir;
+
+            while (isWithinBounds(row, col)) {
+                const square = squares[row][col];
+                const pieceAtPosition = square.chessPiece();
+                if (pieceAtPosition !== null) {
+                    square.setContestedBy(this.color);
+                    break;
+                }
+                square.setContestedBy(this.color);
+                row += rowDir;
+                col += colDir;
+            }
+        }
     }
 }

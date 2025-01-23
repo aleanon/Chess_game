@@ -4,6 +4,17 @@ import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { KNIGHT_SVG } from "./svg/knight.js";
 
+const directions = [
+    [2, 1],
+    [2, -1],
+    [1, -2],
+    [-1, -2],
+    [-2, -1],
+    [-2, 1],
+    [-1, 2],
+    [1, 2],
+];
+
 export class Knight implements ChessPiece {
     readonly color: Color;
     isSelected: boolean = false;
@@ -20,38 +31,20 @@ export class Knight implements ChessPiece {
     public svg(): string {
         return this.color === Color.WHITE ? KNIGHT_SVG.white : KNIGHT_SVG.black;
     }
-    public potentialMoves(
-        fromPosition: Position,
-        squares: Square[][]
-    ): Position[][] {
-        const moves: Position[][] = [];
-
-        const directions = [
-            [2, 1],
-            [2, -1],
-            [1, -2],
-            [-1, -2],
-            [-2, -1],
-            [-2, 1],
-            [-1, 2],
-            [1, 2],
-        ];
-
-        for (let dir = 0; dir < directions.length; dir++) {
-            const [dirRow, dirCol] = directions[dir];
-            const [newRow, newCol] = [
-                fromPosition.row + dirRow,
-                fromPosition.col + dirCol,
+    public calculateMoves(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
+            const [row, col] = [
+                fromPosition.row + rowDir,
+                fromPosition.col + colDir,
             ];
             if (
-                !isWithinBounds(newRow, newCol) ||
-                !this.isValidMove(newRow, newCol, squares)
+                !isWithinBounds(row, col) ||
+                !this.isValidMove(row, col, squares)
             )
                 continue;
 
-            moves.push([Position.new(newRow, newCol)]);
+            squares[row][col].highlight = true;
         }
-        return moves;
     }
 
     public pieceType(): PieceType {
@@ -73,5 +66,17 @@ export class Knight implements ChessPiece {
             square.chessPiece() === null ||
             square.chessPiece()?.color !== this.color
         );
+    }
+
+    public contestSquares(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
+            const [row, col] = [
+                fromPosition.row + rowDir,
+                fromPosition.col + colDir,
+            ];
+            if (!isWithinBounds(row, col)) continue;
+
+            squares[row][col].setContestedBy(this.color);
+        }
     }
 }

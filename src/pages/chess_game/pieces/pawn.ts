@@ -1,6 +1,6 @@
 import { Position } from "../position.js";
 import { Square } from "../squares.js";
-import { ChessPiece, Color, PieceType } from "./chess_piece.js";
+import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { PAWN_SVG } from "./svg/pawn.js";
 
@@ -23,26 +23,21 @@ export class Pawn implements ChessPiece {
         return this.color === Color.WHITE ? PAWN_SVG.white : PAWN_SVG.black;
     }
 
-    public potentialMoves(
-        fromPosition: Position,
-        squares: Square[][]
-    ): Position[][] {
+    public calculateMoves(fromPosition: Position, squares: Square[][]) {
         const takeDirections = this.takeDirections();
         let [rowDir, colDir] = this.moveDirection();
-
-        const possibleMoves: Position[][] = [[]];
 
         let row = fromPosition.row + rowDir;
         let col = fromPosition.col + colDir;
 
         if (this.isValidMove(row, col, squares)) {
-            possibleMoves[0].push(Position.new(row, col));
+            squares[row][col].highlight = true;
 
             if (
                 this.isFirstMove() &&
                 squares[row + rowDir][col].chessPiece() == null
             ) {
-                possibleMoves[0].push(Position.new(row + rowDir, col));
+                squares[row + rowDir][col].highlight = true;
             }
         }
 
@@ -50,11 +45,9 @@ export class Pawn implements ChessPiece {
             row = fromPosition.row + takeRowDir;
             col = fromPosition.col + takeColDir;
             if (this.isValidAttack(row, col, squares)) {
-                possibleMoves.push([Position.new(row, col)]);
+                squares[row][col].highlight = true;
             }
         }
-
-        return possibleMoves;
     }
 
     public pieceType(): PieceType {
@@ -117,5 +110,17 @@ export class Pawn implements ChessPiece {
     public opponentColor(): Color {
         if (this.color === Color.WHITE) return Color.BLACK;
         return Color.WHITE;
+    }
+
+    public contestSquares(fromPosition: Position, squares: Square[][]) {
+        const takeDirections = this.takeDirections();
+
+        for (let [takeRowDir, takeColDir] of takeDirections) {
+            const row = fromPosition.row + takeRowDir;
+            const col = fromPosition.col + takeColDir;
+            if (isWithinBounds(row, col)) {
+                squares[row][col].setContestedBy(this.color);
+            }
+        }
     }
 }

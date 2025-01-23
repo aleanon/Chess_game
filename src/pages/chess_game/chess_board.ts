@@ -164,57 +164,28 @@ export class ChessBoard {
     public selectSquare(row: number, column: number) {
         const selectedSquare = this.squares[row][column];
         this.selectedPiece = selectedSquare.chessPiece();
-        this.markAllSquaresAsNotMovableTo();
+        this.removeHighlightingFromAllSquares();
 
         if (this.selectedPiece === null) {
             this.updateBoardView();
             return;
         }
 
-        const potentialMoves = this.selectedPiece.potentialMoves(
+        this.selectedPiece.calculateMoves(
             selectedSquare.position,
             this.squares
         );
-        // const moves = this.filterImpossibleMoves(
-        //     potentialMoves,
-        //     this.selectedPiece.color
-        // );
-        this.markSquaresAsMovableTo(potentialMoves);
+
         this.updateBoardView();
     }
 
-    markAllSquaresAsNotMovableTo() {
+    removeHighlightingFromAllSquares() {
         this.squares.forEach((row) => {
             row.forEach((square) => {
-                square.can_move_to = false;
+                square.highlight = false;
             });
         });
     }
-
-    markSquaresAsMovableTo(moves: Position[][]) {
-        moves.forEach((row) => {
-            row.forEach((position) => {
-                this.squares[position.row][position.col].can_move_to = true;
-            });
-        });
-    }
-
-    // filterImpossibleMoves(moves: Position[][], pieceColor: Color): Position[] {
-    //     const validMoves: Position[] = [];
-    //     for (let row of moves) {
-    //         for (let position of row) {
-    //             const chessPiece =
-    //                 this.squares[position.row][position.col].chessPiece();
-    //             if (chessPiece != null) {
-    //                 if (chessPiece.color === pieceColor) break;
-    //                 validMoves.push(position);
-    //                 break;
-    //             }
-    //             validMoves.push(position);
-    //         }
-    //     }
-    //     return validMoves;
-    // }
 
     moveTo(row: number, col: number) {
         if (this.selectedPiece == null) return;
@@ -231,7 +202,22 @@ export class ChessBoard {
         piece.position = targetSquare.position;
         targetSquare.placePiece(piece);
         this.selectedPiece = null;
-        this.markAllSquaresAsNotMovableTo();
+        this.removeHighlightingFromAllSquares();
+        this.recalculateContestion();
         this.updateBoardView();
+    }
+
+    recalculateContestion() {
+        this.squares.forEach((row) => {
+            row.forEach((square) => square.contestedByNone());
+        });
+
+        this.squares.forEach((row) => {
+            row.forEach((square) => {
+                square
+                    .chessPiece()
+                    ?.contestSquares(square.position, this.squares);
+            });
+        });
     }
 }

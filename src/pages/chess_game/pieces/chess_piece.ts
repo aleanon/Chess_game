@@ -25,11 +25,13 @@ export interface ChessPiece {
 
     svg(): string;
 
-    potentialMoves(fromPosition: Position, squares: Square[][]): Position[][];
+    calculateMoves(fromPosition: Position, squares: Square[][]): void;
 
     pieceType(): PieceType;
 
     opponentColor(): Color;
+
+    contestSquares(fromPosition: Position, squares: Square[][]): void;
 }
 
 export function isWithinBounds(row: number, column: number): boolean {

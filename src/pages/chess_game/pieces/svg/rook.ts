@@ -1,7 +1,7 @@
 import { Color } from "../chess_piece.js";
 
 const svg = (color: Color) => {
-  return /*svg*/ `
+    return /*svg*/ `
         <svg 
             xmlns="http://www.w3.org/2000/svg" version="1.0" 
             viewBox="0 0 750 350"
@@ -12,7 +12,7 @@ const svg = (color: Color) => {
         <metadata>
         </metadata>
         <g 
-            transform="translate(-100,500) scale(0.16,-0.14)" 
+            transform="translate(-125,500) scale(0.16,-0.14)" 
             fill=${color} stroke="none"
         >
         <path xmlns="http://www.w3.org/2000/svg" d="M2550 3684 c-14 -14 -16 -62 -14 -412 l3 -397 31 -16 32 -15 -19 -25 c-32 -40 -52 -126 -47 -194 9 -103 59 -174 150 -215 l47 -21 -19 -32 c-36 -59 -19 -176 31 -211 18 -12 18 -19 -11 -207 -70 -450 -146 -745 -248 -961 -21 -46 -42 -95 -45 -110 -4 -14 -24 -37 -47 -52 -45 -30 -59 -65 -38 -99 8 -12 18 -45 21 -74 6 -56 27 -105 60 -140 l20 -23 -56 0 c-87 0 -86 3 -86 -237 0 -114 5 -215 10 -225 9 -17 47 -18 812 -18 611 0 806 3 815 12 17 17 17 439 0 456 -7 7 -30 12 -51 12 l-39 0 25 30 c42 49 60 112 55 183 -6 71 -23 111 -68 156 l-32 31 26 0 c14 0 26 1 26 3 0 2 -30 48 -67 103 -78 117 -104 173 -166 354 -91 267 -157 576 -157 735 0 50 3 62 21 73 45 28 65 148 34 202 -21 36 -19 38 28 52 65 19 141 100 157 167 19 82 9 172 -28 231 l-30 48 35 5 c66 11 63 -10 63 423 l0 393 -22 15 c-20 14 -94 16 -610 16 -522 0 -588 -2 -602 -16z"/>
@@ -21,6 +21,6 @@ const svg = (color: Color) => {
 };
 
 export const ROOK_SVG = {
-  white: svg(Color.WHITE),
-  black: svg(Color.BLACK),
+    white: svg(Color.WHITE),
+    black: svg(Color.BLACK),
 } as const;

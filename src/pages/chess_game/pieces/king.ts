@@ -5,6 +5,17 @@ import { parseSVG } from "./common.js";
 import { KING_SVG } from "./svg/king.js";
 import { KNIGHT_SVG } from "./svg/knight.js";
 
+const directions = [
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+    [0, -1],
+    [0, 1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
+];
+
 export class King implements ChessPiece {
     readonly color: Color;
     isSelected: boolean = false;
@@ -23,38 +34,19 @@ export class King implements ChessPiece {
         return this.color === Color.WHITE ? KING_SVG.white : KING_SVG.black;
     }
 
-    public potentialMoves(
-        fromPosition: Position,
-        squares: Square[][]
-    ): Position[][] {
-        const directions = [
-            [-1, -1],
-            [-1, 0],
-            [-1, 1],
-            [0, -1],
-            [0, 1],
-            [1, -1],
-            [1, 0],
-            [1, 1],
-        ];
-
-        const moves: Position[][] = [];
-
+    public calculateMoves(fromPosition: Position, squares: Square[][]) {
         for (const [rowDir, colDir] of directions) {
-            const newRow = fromPosition.row + rowDir;
-            const newCol = fromPosition.col + colDir;
+            const row = fromPosition.row + rowDir;
+            const col = fromPosition.col + colDir;
 
             if (
-                !isWithinBounds(newRow, newCol) ||
-                !this.isValidMove(newRow, newCol, squares)
+                !isWithinBounds(row, col) ||
+                !this.isValidMove(row, col, squares)
             )
                 continue;
 
-            const pos = Position.new(newRow, newCol);
-            moves.push([pos]);
+            squares[row][col].highlight = true;
         }
-
-        return moves;
     }
 
     public pieceType(): PieceType {
@@ -76,5 +68,16 @@ export class King implements ChessPiece {
             (piece === null || piece?.color !== this.color) &&
             !squares[row][column].isContestedBy(this.opponentColor())
         );
+    }
+
+    public contestSquares(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
+            const row = fromPosition.row + rowDir;
+            const col = fromPosition.col + colDir;
+
+            if (!isWithinBounds(row, col)) continue;
+
+            squares[row][col].setContestedBy(this.color);
+        }
     }
 }

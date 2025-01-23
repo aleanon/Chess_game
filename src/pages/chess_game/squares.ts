@@ -6,7 +6,7 @@ const columns = ["a", "b", "c", "d", "e", "f", "g", "h"];
 export class Square {
     public readonly position: Position;
     private piece: ChessPiece | null;
-    public can_move_to: boolean = false;
+    public highlight: boolean = false;
     private contestedByBlack: boolean = false;
     private contestedByWhite: boolean = false;
     private color: string;
@@ -32,11 +32,11 @@ export class Square {
     }
 
     shouldHighlight(): boolean {
-        return this.can_move_to;
+        return this.highlight;
     }
 
     removeHighlight() {
-        this.can_move_to = false;
+        this.highlight = false;
     }
 
     hasSameColorPiece(color: Color): boolean {
@@ -78,7 +78,7 @@ export class Square {
     }
 
     public createSquarehtml(): string {
-        const highlighting = this.can_move_to ? "highlight" : "";
+        const highlighting = this.highlight ? "highlight" : "";
 
         return /* HTML */ `
             <div
@@ -102,7 +102,7 @@ export class Square {
     }
 
     private createOnclick() {
-        return this.can_move_to
+        return this.highlight
             ? `window.model.getCurrentPage().board.moveTo(${this.position.row}, ${this.position.col})`
             : `window.model.getCurrentPage().board.selectSquare(${this.position.row}, ${this.position.col})`;
     }

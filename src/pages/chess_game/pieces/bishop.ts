@@ -4,6 +4,13 @@ import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { BISHOP_SVG } from "./svg/bishop.js";
 
+const directions = [
+    [1, 1],
+    [1, -1],
+    [-1, 1],
+    [-1, -1],
+];
+
 export class Bishop implements ChessPiece {
     public readonly color: Color;
     isSelected: boolean = false;
@@ -22,40 +29,25 @@ export class Bishop implements ChessPiece {
         return this.color === Color.WHITE ? BISHOP_SVG.white : BISHOP_SVG.black;
     }
 
-    public potentialMoves(
-        fromPosition: Position,
-        squares: Square[][]
-    ): Position[][] {
-        const directions = [
-            [1, 1],
-            [1, -1],
-            [-1, 1],
-            [-1, -1],
-        ];
-
-        const moves: Position[][] = [[], [], [], []];
-
-        for (let dir = 0; dir < 4; dir++) {
-            const [rowDir, colDir] = directions[dir];
+    public calculateMoves(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
             let row = fromPosition.row + rowDir;
             let col = fromPosition.col + colDir;
 
             while (isWithinBounds(row, col)) {
+                const square = squares[row][col];
                 const pieceAtPosition = squares[row][col].chessPiece();
                 if (pieceAtPosition !== null) {
                     if (pieceAtPosition.color != this.color) {
-                        moves[dir].push(Position.new(row, col));
+                        square.highlight = true;
                     }
                     break;
                 }
-                const pos = Position.new(row, col);
-                moves[dir].push(pos);
+                square.highlight = true;
                 row += rowDir;
                 col += colDir;
             }
         }
-
-        return moves;
     }
 
     public pieceType(): PieceType {
@@ -65,5 +57,23 @@ export class Bishop implements ChessPiece {
     public opponentColor(): Color {
         if (this.color === Color.WHITE) return Color.BLACK;
         return Color.WHITE;
+    }
+
+    public contestSquares(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
+            let row = fromPosition.row + rowDir;
+            let col = fromPosition.col + colDir;
+
+            while (isWithinBounds(row, col)) {
+                const square = squares[row][col];
+                if (square.chessPiece() !== null) {
+                    square.setContestedBy(this.color);
+                    break;
+                }
+                square.setContestedBy(this.color);
+                row += rowDir;
+                col += colDir;
+            }
+        }
     }
 }

@@ -4,6 +4,13 @@ import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { ROOK_SVG } from "./svg/rook.js";
 
+const directions = [
+    [0, 1],
+    [0, -1],
+    [1, 0],
+    [-1, 0],
+];
+
 export class Rook implements ChessPiece {
     readonly color: Color;
     isSelected: boolean = false;
@@ -22,41 +29,25 @@ export class Rook implements ChessPiece {
         return this.color === Color.WHITE ? ROOK_SVG.white : ROOK_SVG.black;
     }
 
-    public potentialMoves(
-        fromPosition: Position,
-        squares: Square[][]
-    ): Position[][] {
-        const directions = [
-            [0, 1], //Right
-            [0, -1], //Left
-            [1, 0], //Up
-            [-1, 0], //Down
-        ];
-
-        const moves: Position[][] = [[], [], [], []];
-
-        for (let dir = 0; dir < directions.length; dir++) {
-            const [rowDir, colDir] = directions[dir];
-
+    public calculateMoves(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
             let row = fromPosition.row + rowDir;
             let col = fromPosition.col + colDir;
 
             while (isWithinBounds(row, col)) {
-                const pieceAtPosition = squares[row][col].chessPiece();
+                const square = squares[row][col];
+                const pieceAtPosition = square.chessPiece();
                 if (pieceAtPosition !== null) {
                     if (pieceAtPosition.color != this.color) {
-                        moves[dir].push(Position.new(row, col));
+                        square.highlight = true;
                     }
                     break;
                 }
-                const pos = Position.new(row, col);
-                moves[dir].push(pos);
+                square.highlight = true;
                 row += rowDir;
                 col += colDir;
             }
         }
-
-        return moves;
     }
 
     public pieceType(): PieceType {
@@ -66,5 +57,24 @@ export class Rook implements ChessPiece {
     public opponentColor(): Color {
         if (this.color === Color.WHITE) return Color.BLACK;
         return Color.WHITE;
+    }
+
+    public contestSquares(fromPosition: Position, squares: Square[][]) {
+        for (const [rowDir, colDir] of directions) {
+            let row = fromPosition.row + rowDir;
+            let col = fromPosition.col + colDir;
+
+            while (isWithinBounds(row, col)) {
+                const square = squares[row][col];
+                const pieceAtPosition = square.chessPiece();
+                if (pieceAtPosition !== null) {
+                    square.setContestedBy(this.color);
+                    break;
+                }
+                square.setContestedBy(this.color);
+                row += rowDir;
+                col += colDir;
+            }
+        }
     }
 }
