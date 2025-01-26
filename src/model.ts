@@ -1,5 +1,4 @@
-import { ChessBoard } from "./pages/chess_game/chess_board.js";
-import { ChessGame } from "./pages/chess_game/chess_game.js";
+import { ChessPage } from "./pages/chess_game/chess_page.js";
 import { Page } from "./pages/page.js";
 
 export class Model {
@@ -12,11 +11,15 @@ export class Model {
     setPage(page: Page): void {
         this.currentPage.hide();
         this.currentPage = page;
-        this.currentPage.view();
+        this.currentPage.updateView();
     }
 
     getCurrentPage(): Page {
         return this.currentPage;
+    }
+
+    updateView() {
+        this.currentPage.updateView();
     }
 
     updateCurrentPage(): void {
@@ -25,11 +28,11 @@ export class Model {
         }
     }
     view() {
-        this.currentPage?.view();
+        this.currentPage?.updateView();
     }
 }
 
-const page = new ChessGame("1");
+const page = new ChessPage("1");
 export const model = new Model(page);
 
 declare global {

@@ -1,5 +1,5 @@
 import { Position } from "../position";
-import { Square } from "../squares";
+import { Square } from "../square";
 
 export enum Color {
     WHITE = "white",
@@ -7,12 +7,12 @@ export enum Color {
 }
 
 export enum PieceType {
-    PAWN = "Pawn",
-    KNIGHT = "Knight",
-    BISHOP = "Bishop",
-    ROOK = "Rook",
-    QUEEN = "Queen",
-    KING = "King",
+    PAWN,
+    KNIGHT,
+    BISHOP,
+    ROOK,
+    QUEEN,
+    KING,
 }
 
 export interface ChessPiece {
@@ -36,4 +36,21 @@ export interface ChessPiece {
 
 export function isWithinBounds(row: number, column: number): boolean {
     return row >= 0 && row < 8 && column >= 0 && column < 8;
+}
+
+export function pieceTypeToString(pieceType: PieceType): string {
+    switch (pieceType) {
+        case PieceType.PAWN:
+            return "Pawn";
+        case PieceType.KNIGHT:
+            return "Knight";
+        case PieceType.BISHOP:
+            return "Bishop";
+        case PieceType.ROOK:
+            return "Rook";
+        case PieceType.QUEEN:
+            return "Queen";
+        case PieceType.KING:
+            return "King";
+    }
 }

@@ -1,0 +1,18 @@
+
+
+#taken-pieces-container {
+    width: 300px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: aqua;
+}
+
+.taken-pieces {
+    display: flex;
+    height: 42%;
+    background-color: blueviolet;
+    border: 10px;
+    border-color: black;
+} 

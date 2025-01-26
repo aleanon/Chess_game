@@ -1,5 +1,5 @@
 import { Position } from "../position.js";
-import { Square } from "../squares.js";
+import { Square } from "../square.js";
 import { ChessPiece, Color, isWithinBounds, PieceType } from "./chess_piece.js";
 import { parseSVG } from "./common.js";
 import { KING_SVG } from "./svg/king.js";

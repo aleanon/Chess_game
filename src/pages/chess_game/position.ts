@@ -1,87 +1,110 @@
 export class Position {
-    static readonly A1 = new Position("A1", 0, 0);
-    static readonly B1 = new Position("B1", 0, 1);
-    static readonly C1 = new Position("C1", 0, 2);
-    static readonly D1 = new Position("D1", 0, 3);
-    static readonly E1 = new Position("E1", 0, 4);
-    static readonly F1 = new Position("F1", 0, 5);
-    static readonly G1 = new Position("G1", 0, 6);
-    static readonly H1 = new Position("H1", 0, 7);
-
-    static readonly A2 = new Position("A2", 1, 0);
-    static readonly B2 = new Position("B2", 1, 1);
-    static readonly C2 = new Position("C2", 1, 2);
-    static readonly D2 = new Position("D2", 1, 3);
-    static readonly E2 = new Position("E2", 1, 4);
-    static readonly F2 = new Position("F2", 1, 5);
-    static readonly G2 = new Position("G2", 1, 6);
-    static readonly H2 = new Position("H2", 1, 7);
-
-    static readonly A3 = new Position("A3", 2, 0);
-    static readonly B3 = new Position("B3", 2, 1);
-    static readonly C3 = new Position("C3", 2, 2);
-    static readonly D3 = new Position("D3", 2, 3);
-    static readonly E3 = new Position("E3", 2, 4);
-    static readonly F3 = new Position("F3", 2, 5);
-    static readonly G3 = new Position("G3", 2, 6);
-    static readonly H3 = new Position("H3", 2, 7);
-
-    static readonly A4 = new Position("A4", 3, 0);
-    static readonly B4 = new Position("B4", 3, 1);
-    static readonly C4 = new Position("C4", 3, 2);
-    static readonly D4 = new Position("D4", 3, 3);
-    static readonly E4 = new Position("E4", 3, 4);
-    static readonly F4 = new Position("F4", 3, 5);
-    static readonly G4 = new Position("G4", 3, 6);
-    static readonly H4 = new Position("H4", 3, 7);
-
-    static readonly A5 = new Position("A5", 4, 0);
-    static readonly B5 = new Position("B5", 4, 1);
-    static readonly C5 = new Position("C5", 4, 2);
-    static readonly D5 = new Position("D5", 4, 3);
-    static readonly E5 = new Position("E5", 4, 4);
-    static readonly F5 = new Position("F5", 4, 5);
-    static readonly G5 = new Position("G5", 4, 6);
-    static readonly H5 = new Position("H5", 4, 7);
-
-    static readonly A6 = new Position("A6", 5, 0);
-    static readonly B6 = new Position("B6", 5, 1);
-    static readonly C6 = new Position("C6", 5, 2);
-    static readonly D6 = new Position("D6", 5, 3);
-    static readonly E6 = new Position("E6", 5, 4);
-    static readonly F6 = new Position("F6", 5, 5);
-    static readonly G6 = new Position("G6", 5, 6);
-    static readonly H6 = new Position("H6", 5, 7);
-
-    static readonly A7 = new Position("A7", 6, 0);
-    static readonly B7 = new Position("B7", 6, 1);
-    static readonly C7 = new Position("C7", 6, 2);
-    static readonly D7 = new Position("D7", 6, 3);
-    static readonly E7 = new Position("E7", 6, 4);
-    static readonly F7 = new Position("F7", 6, 5);
-    static readonly G7 = new Position("G7", 6, 6);
-    static readonly H7 = new Position("H7", 6, 7);
-
-    static readonly A8 = new Position("A8", 7, 0);
-    static readonly B8 = new Position("B8", 7, 1);
-    static readonly C8 = new Position("C8", 7, 2);
-    static readonly D8 = new Position("D8", 7, 3);
-    static readonly E8 = new Position("E8", 7, 4);
-    static readonly F8 = new Position("F8", 7, 5);
-    static readonly G8 = new Position("G8", 7, 6);
-    static readonly H8 = new Position("H8", 7, 7);
-
-    private constructor(
+    constructor(
         public readonly name: string,
         readonly row: number,
         readonly col: number
     ) {}
 
-    static new(row: number, col: number): Position {
-        return new Position(
-            `${String.fromCharCode(65 + col)}${8 - row}`,
-            row,
-            col
-        );
+    public pathToPosition(position: Position): Position[] {
+        const path: Position[] = [];
+        let currentRow = this.row;
+        let currentCol = this.col;
+        const targetRow = position.row;
+        const targetCol = position.col;
+
+        while (currentRow !== targetRow || currentCol !== targetCol) {
+            if (currentRow < targetRow) currentRow++;
+            else if (currentRow > targetRow) currentRow--;
+
+            if (currentCol < targetCol) currentCol++;
+            else if (currentCol > targetCol) currentCol--;
+
+            path.push(POSITIONS[currentRow][currentCol]);
+        }
+
+        return path;
     }
 }
+
+export const POSITIONS = [
+    [
+        new Position("A8", 0, 0),
+        new Position("B8", 0, 1),
+        new Position("C8", 0, 2),
+        new Position("D8", 0, 3),
+        new Position("E8", 0, 4),
+        new Position("F8", 0, 5),
+        new Position("G8", 0, 6),
+        new Position("H8", 0, 7),
+    ],
+    [
+        new Position("A7", 1, 0),
+        new Position("B7", 1, 1),
+        new Position("C7", 1, 2),
+        new Position("D7", 1, 3),
+        new Position("E7", 1, 4),
+        new Position("F7", 1, 5),
+        new Position("G7", 1, 6),
+        new Position("H7", 1, 7),
+    ],
+    [
+        new Position("A6", 2, 0),
+        new Position("B6", 2, 1),
+        new Position("C6", 2, 2),
+        new Position("D6", 2, 3),
+        new Position("E6", 2, 4),
+        new Position("F6", 2, 5),
+        new Position("G6", 2, 6),
+        new Position("H6", 2, 7),
+    ],
+    [
+        new Position("A5", 3, 0),
+        new Position("B5", 3, 1),
+        new Position("C5", 3, 2),
+        new Position("D5", 3, 3),
+        new Position("E5", 3, 4),
+        new Position("F5", 3, 5),
+        new Position("G5", 3, 6),
+        new Position("H5", 3, 7),
+    ],
+    [
+        new Position("A4", 4, 0),
+        new Position("B4", 4, 1),
+        new Position("C4", 4, 2),
+        new Position("D4", 4, 3),
+        new Position("E4", 4, 4),
+        new Position("F4", 4, 5),
+        new Position("G4", 4, 6),
+        new Position("H4", 4, 7),
+    ],
+    [
+        new Position("A3", 5, 0),
+        new Position("B3", 5, 1),
+        new Position("C3", 5, 2),
+        new Position("D3", 5, 3),
+        new Position("E3", 5, 4),
+        new Position("F3", 5, 5),
+        new Position("G3", 5, 6),
+        new Position("H3", 5, 7),
+    ],
+    [
+        new Position("A2", 6, 0),
+        new Position("B2", 6, 1),
+        new Position("C2", 6, 2),
+        new Position("D2", 6, 3),
+        new Position("E2", 6, 4),
+        new Position("F2", 6, 5),
+        new Position("G2", 6, 6),
+        new Position("H2", 6, 7),
+    ],
+    [
+        new Position("A1", 7, 0),
+        new Position("B1", 7, 1),
+        new Position("C1", 7, 2),
+        new Position("D1", 7, 3),
+        new Position("E1", 7, 4),
+        new Position("F1", 7, 5),
+        new Position("G1", 7, 6),
+        new Position("H1", 7, 7),
+    ],
+];

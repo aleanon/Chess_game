@@ -1,3 +1,6 @@
+import { model } from "../../model.js";
+import { ChessGame } from "./chess_game.js";
+import { Move } from "./move.js";
 import { Bishop } from "./pieces/bishop.js";
 import { ChessPiece, Color } from "./pieces/chess_piece.js";
 import { King } from "./pieces/king.js";
@@ -5,135 +8,119 @@ import { Knight } from "./pieces/knight.js";
 import { Pawn } from "./pieces/pawn.js";
 import { Queen } from "./pieces/queen.js";
 import { Rook } from "./pieces/rook.js";
-import { Position } from "./position.js";
-import { Square } from "./squares.js";
+import { Position, POSITIONS } from "./position.js";
+import { Square } from "./square.js";
 
 const BOARD_ID = "chess-board";
+const BOARD_CONTAINER_ID = "chess-board-container";
 
 export class ChessBoard {
+    private game: ChessGame;
     private squares: Square[][];
     private selectedPiece: ChessPiece | null = null;
     private player_color: Color = Color.WHITE;
-    private rotateBoard: boolean;
+    private moves: Move[];
+    public rotateBoard: boolean;
 
-    constructor() {
+    constructor(game: ChessGame) {
         this.squares = this.constructNewBoard();
         this.rotateBoard = this.player_color === Color.BLACK;
+        this.game = game;
+        this.moves = [];
     }
 
     private constructNewBoard(): Square[][] {
         let newBoard: Square[][] = [];
 
-        newBoard.push(this.constructOfficersRow(0, Color.BLACK));
-        newBoard.push(this.constructPawnRow(1, Color.BLACK));
+        newBoard.push(this.constructOfficersRow(POSITIONS[0], Color.BLACK));
+        newBoard.push(this.constructPawnRow(POSITIONS[1], Color.BLACK));
 
-        for (let rowIndex = 2; rowIndex < 6; rowIndex++) {
-            newBoard.push(this.constructEmptyRow(rowIndex));
+        for (const positions of POSITIONS.slice(2, 6)) {
+            newBoard.push(this.constructEmptyRow(positions));
         }
 
-        newBoard.push(this.constructPawnRow(6, Color.WHITE));
-        newBoard.push(this.constructOfficersRow(7, Color.WHITE));
+        newBoard.push(this.constructPawnRow(POSITIONS[6], Color.WHITE));
+        newBoard.push(this.constructOfficersRow(POSITIONS[7], Color.WHITE));
         return newBoard;
     }
 
-    private constructOfficersRow(rowIndex: number, color: Color): Square[] {
+    private constructOfficersRow(
+        positions: Position[],
+        color: Color
+    ): Square[] {
         return [
-            new Square(
-                new Rook(color, Position.new(rowIndex, 0)),
-                Position.new(rowIndex, 0)
-            ),
-            new Square(
-                new Knight(color, Position.new(rowIndex, 1)),
-                Position.new(rowIndex, 1)
-            ),
-            new Square(
-                new Bishop(color, Position.new(rowIndex, 2)),
-                Position.new(rowIndex, 2)
-            ),
-            new Square(
-                new Queen(color, Position.new(rowIndex, 3)),
-                Position.new(rowIndex, 3)
-            ),
-            new Square(
-                new King(color, Position.new(rowIndex, 4)),
-                Position.new(rowIndex, 4)
-            ),
-            new Square(
-                new Bishop(color, Position.new(rowIndex, 5)),
-                Position.new(rowIndex, 5)
-            ),
-            new Square(
-                new Knight(color, Position.new(rowIndex, 6)),
-                Position.new(rowIndex, 6)
-            ),
-            new Square(
-                new Rook(color, Position.new(rowIndex, 7)),
-                Position.new(rowIndex, 7)
-            ),
+            new Square(new Rook(color, positions[0]), positions[0], this),
+            new Square(new Knight(color, positions[1]), positions[1], this),
+            new Square(new Bishop(color, positions[2]), positions[2], this),
+            new Square(new Queen(color, positions[3]), positions[3], this),
+            new Square(new King(color, positions[4]), positions[4], this),
+            new Square(new Bishop(color, positions[5]), positions[5], this),
+            new Square(new Knight(color, positions[6]), positions[6], this),
+            new Square(new Rook(color, positions[7]), positions[7], this),
         ];
     }
 
-    private constructPawnRow(rowIndex: number, color: Color): Square[] {
+    private constructPawnRow(positions: Position[], color: Color): Square[] {
         const row: Square[] = [];
-        for (let colIndex = 0; colIndex < 8; colIndex++) {
-            row.push(
-                new Square(
-                    new Pawn(color, Position.new(rowIndex, colIndex)),
-                    Position.new(rowIndex, colIndex)
-                )
-            );
+        for (const position of positions) {
+            row.push(new Square(new Pawn(color, position), position, this));
         }
         return row;
     }
 
-    private constructEmptyRow(rowIndex: number): Square[] {
+    private constructEmptyRow(positions: Position[]): Square[] {
         const row: Square[] = [];
-        for (let colIndex = 0; colIndex < 8; colIndex++) {
-            row.push(new Square(null, Position.new(rowIndex, colIndex)));
+        for (const position of positions) {
+            row.push(new Square(null, position, this));
         }
         return row;
-    }
-
-    public updateBoardView() {
-        this.squares.forEach((row) => {
-            row.forEach((square) => square.updateSquareView());
-        });
     }
 
     createBoardHtml(): string {
         return /*HTML*/ ` 
-        <div class="board-wrapper">
-            <div class="rank-labels ${
-                this.rotateBoard ? "column-reverse" : ""
-            }">
-                <div>8</div>
-                <div>7</div>
-                <div>6</div>
-                <div>5</div>
-                <div>4</div>
-                <div>3</div>
-                <div>2</div>
-                <div>1</div>
-            </div>
+        <div id="${BOARD_CONTAINER_ID}">
+            <div class="player-info"></div>
+            ${this.createBoardContentHtml()}
+            <div class="player-info"></div>
+        </div>`;
+    }
 
-            <div id="${BOARD_ID}" class="chess-board ${
+    private createBoardContentHtml(): string {
+        return /*html*/ `
+            <div class="board-wrapper">
+                <div class="rank-labels ${
+                    this.rotateBoard ? "column-reverse" : ""
+                }">
+                    <div class="rank-label">8</div>
+                    <div class="rank-label">7</div>
+                    <div class="rank-label">6</div>
+                    <div class="rank-label">5</div>
+                    <div class="rank-label">4</div>
+                    <div class="rank-label">3</div>
+                    <div class="rank-label">2</div>
+                    <div class="rank-label">1</div>
+                </div>
+
+                <div id="${BOARD_ID}" class="chess-board ${
             this.rotateBoard ? "column-reverse" : ""
         }">
-                    ${this.createBoardRowsHtml()}
+                                ${this.createBoardRowsHtml()}
+                </div>
+                
+                <div class="file-labels ${
+                    this.rotateBoard ? "row-reverse" : ""
+                }">
+                    <div class="file-label">a</div>
+                    <div class="file-label">b</div>
+                    <div class="file-label">c</div>
+                    <div class="file-label">d</div>
+                    <div class="file-label">e</div>
+                    <div class="file-label">f</div>
+                    <div class="file-label">g</div>
+                    <div class="file-label">h</div>
+                </div>
             </div>
-           
-            
-            <div class="file-labels ${this.rotateBoard ? "row-reverse" : ""}">
-                <div>a</div>
-                <div>b</div>
-                <div>c</div>
-                <div>d</div>
-                <div>e</div>
-                <div>f</div>
-                <div>g</div>
-                <div>h</div>
-            </div>
-            </div>`;
+        `;
     }
 
     private createBoardRowsHtml(): string {
@@ -161,28 +148,44 @@ export class ChessBoard {
         return row;
     }
 
+    public updateBoardView() {
+        const element = document.getElementById(BOARD_CONTAINER_ID);
+        if (element == null) return;
+
+        element.innerHTML = this.createBoardHtml();
+    }
+
+    public updateSquaresView() {
+        this.squares.forEach((row) => {
+            row.forEach((square) => square.updateSquareView());
+        });
+    }
+
     public selectSquare(row: number, column: number) {
         const selectedSquare = this.squares[row][column];
         this.selectedPiece = selectedSquare.chessPiece();
         this.removeHighlightingFromAllSquares();
 
         if (this.selectedPiece === null) {
-            this.updateBoardView();
+            this.updateSquaresView();
             return;
         }
 
+        selectedSquare.selected = true;
         this.selectedPiece.calculateMoves(
             selectedSquare.position,
             this.squares
         );
 
-        this.updateBoardView();
+        this.updateSquaresView();
     }
 
-    removeHighlightingFromAllSquares() {
+    private removeHighlightingFromAllSquares() {
         this.squares.forEach((row) => {
             row.forEach((square) => {
                 square.highlight = false;
+                square.partOfLastMove = false;
+                square.selected = false;
             });
         });
     }
@@ -201,13 +204,22 @@ export class ChessBoard {
 
         piece.position = targetSquare.position;
         targetSquare.placePiece(piece);
+        const move = new Move(
+            currentSquare.position,
+            targetSquare.position,
+            piece,
+            targetSquare.chessPiece()
+        );
+        this.moves.push(move);
         this.selectedPiece = null;
         this.removeHighlightingFromAllSquares();
+        currentSquare.partOfLastMove = true;
+        targetSquare.partOfLastMove = true;
         this.recalculateContestion();
-        this.updateBoardView();
+        model.updateView();
     }
 
-    recalculateContestion() {
+    private recalculateContestion() {
         this.squares.forEach((row) => {
             row.forEach((square) => square.contestedByNone());
         });

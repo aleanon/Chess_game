@@ -1,5 +1,7 @@
 @import url(chess_board.css);
 @import url(home.css);
+@import url(chess_page.css);
+@import url(taken_pieces.css);
 
 * {
     margin: 0;
@@ -7,3 +9,7 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    width: 100%;
+}
